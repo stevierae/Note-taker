@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const { v4: uuidv4 } = require("uuid");
+const uuid = uuidv4();
 
 const PORT = process.env.PORT || 3001;
 
@@ -20,13 +22,26 @@ app.get("/api/notes",(req, res)=> {
       const notes = JSON.parse(data)
       console.log(notes)
       res.json(notes)
-    })
-    
-
+    });
 })
 
-
-
+app.post('/api/notes', (req, res) => {
+    fs.readFile('./db/db.json', 'utf8', function(err, data) {
+        let parsedNotes = JSON.parse(data)
+        const { title, text } = req.body;
+        const newNote = {
+            title,
+            text,
+        };
+        newNote.id = parsedNotes.length + 1;
+        parsedNotes.push(newNote)
+        fs.writeFile('./db/db.json', JSON.stringify(parsedNotes, null, 3), function (err) {
+            if (err) throw err;
+            res.json(parsedNotes)
+        })
+    })
+});
+        
 
 // html routes
 app.get('/', (req, res) =>
