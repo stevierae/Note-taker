@@ -12,6 +12,22 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
+// Api routes
+app.get("/api/notes",(req, res)=> {
+    fs.readFile("./db/db.json", "utf-8", (err,data) => {
+      if (err) throw err
+      console.log(data)  
+      const notes = JSON.parse(data)
+      console.log(notes)
+      res.json(notes)
+    })
+    
+
+})
+
+
+
+
 // html routes
 app.get('/', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/index.html'))
